@@ -1,6 +1,4 @@
-FROM php:7.1-apache
-
-MAINTAINER Rafael Corrêa Gomes <rafaelcgstz@gmail.com>
+FROM php:7.2-apache
 
 ENV XDEBUG_PORT 9000
 
@@ -22,8 +20,7 @@ RUN apt-get update \
 	apt-utils \
 	gnupg \
 	redis-tools \
-	# mysql-client \
-	mariadb-client \
+	mariadb-client\
 	git \
 	vim \
 	wget \
@@ -33,7 +30,7 @@ RUN apt-get update \
 	unzip \
 	tar \
 	cron \
-	bash-completion \
+	bash-completion \ 
 	&& apt-get clean
 
 # Install Magento Dependencies
@@ -46,11 +43,11 @@ RUN docker-php-ext-configure \
   	bcmath \
   	intl \
   	mbstring \
-  	mcrypt \
   	pdo_mysql \
   	soap \
   	xsl \
-  	zip
+  	zip \
+	sockets
 
 # Install oAuth
 
@@ -63,11 +60,6 @@ RUN apt-get update \
   	&& echo "extension=oauth.so" > /usr/local/etc/php/conf.d/docker-php-ext-oauth.ini
 
 # Install Node, NVM, NPM and Grunt
-
-# RUN curl -sL https://deb.nodesource.com/setup_6.x | bash - \
-#   	&& apt-get install -y nodejs build-essential \
-#     && curl https://raw.githubusercontent.com/creationix/nvm/v0.16.1/install.sh | sh \
-#     && npm i -g grunt-cli yarn
 
 RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - \
   	&& apt-get install -y nodejs build-essential \
@@ -117,8 +109,13 @@ RUN ln -s /etc/apache2/sites-available/magento.conf /etc/apache2/sites-enabled/m
 
 RUN curl -o /etc/bash_completion.d/m2install-bash-completion https://raw.githubusercontent.com/yvoronoy/m2install/master/m2install-bash-completion
 RUN curl -o /etc/bash_completion.d/n98-magerun2.phar.bash https://raw.githubusercontent.com/netz98/n98-magerun2/master/res/autocompletion/bash/n98-magerun2.phar.bash
-RUN echo "source /etc/bash_completion" >> /root/.bashrc
-RUN echo "source /etc/bash_completion" >> /var/www/.bashrc
+# RUN echo "source /etc/bash_completion" >> /root/.bashrc
+# RUN echo "source /etc/bash_completion" >> /var/www/.bashrc
+
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=DontWarn apt-key add - && \
+    echo "deb http://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
+    apt-get update && \
+    apt-get install --no-install-recommends yarn
 
 RUN chmod 777 -Rf /var/www /var/www/.* \
 	&& chown -Rf www-data:www-data /var/www /var/www/.* \
@@ -127,8 +124,6 @@ RUN chmod 777 -Rf /var/www /var/www/.* \
 	&& a2enmod rewrite \
 	&& a2enmod headers
 
-VOLUME /var/www/html
-WORKDIR /var/www/html
 
 #Configuração removendo user www-data, e recriar como user comum com mesmo id e gid
 ARG USER_NAME=www-data
@@ -141,7 +136,11 @@ RUN userdel -f ${USER_NAME} && \
     usermod -a -G ${USER_NAME} root && \
     install -d -m 0755 -o ${USER_NAME} -g ${USER_NAME} /home/${USER_NAME}
 
+# RUN curl -sS  https://accounts.magento.cloud/cli/installer | php
+
 #magento-cloud
 RUN curl -sS https://accounts.magento.cloud/cli/installer | php \
 	&& chmod +x /root/.magento-cloud/bin/magento-cloud \
 	&& mv /root/.magento-cloud/bin/magento-cloud /usr/local/bin/
+
+# /root/.magento-cloud/bin/magento-cloud
