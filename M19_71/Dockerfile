@@ -101,6 +101,7 @@ RUN wget https://raw.githubusercontent.com/colinmollenhour/modman/master/modman 
 # Install Composer
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer
+RUN composer self-update --1
 
 # To SSH
 # RUN /usr/sbin/sshd
