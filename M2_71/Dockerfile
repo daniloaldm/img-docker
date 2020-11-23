@@ -78,6 +78,7 @@ RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - \
 
 RUN	curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer
 # RUN composer global require hirak/prestissimo
+RUN composer self-update --1
 
 # Install Code Sniffer
 
