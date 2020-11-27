@@ -48,6 +48,10 @@ RUN docker-php-ext-configure \
   	xsl \
   	zip \
 	sockets
+	
+RUN docker-php-ext-configure pcntl --enable-pcntl
+RUN docker-php-ext-install pcntl
+
 
 # Install oAuth
 
