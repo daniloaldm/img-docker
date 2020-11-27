@@ -51,6 +51,9 @@ RUN docker-php-ext-configure \
   	soap \
   	xsl \
   	zip
+	
+RUN docker-php-ext-configure pcntl --enable-pcntl
+RUN docker-php-ext-install pcntl
 
 # Install oAuth
 
