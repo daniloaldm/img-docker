@@ -1,11 +1,16 @@
 version: '2'
 services:
   elasticsearch:
-    image: elasticsearch:2.4
+    # image: elasticsearch:2.4
+    container_name: hib-magento-elastic
+    build: ./.docker/elasticsearch6
     environment:
-      - cluster.name=docker-cluster
+      - discovery.type=single-node
+      - node.name=es01m2
+      - cluster.name=es-docker-cluster
+      - node.store.allow_mmap=false
       - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m -Dlog4j2.disable.jmx=true"
     ulimits:
       memlock:
         soft: -1
@@ -13,6 +18,7 @@ services:
     volumes:
       - ./elasticsearchdata:/usr/share/elasticsearch/data
     ports:
+      - 9300:9300
       - 9200:9200
     networks:
-      - <project_name>-network
+      - M2_71-network
