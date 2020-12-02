@@ -2,7 +2,7 @@ version: '2'
 services:
   elasticsearch:
     # image: elasticsearch:2.4
-    container_name: hib-magento-elastic
+    # container_name: hib-magento-elastic
     build: ./.docker/elasticsearch6
     environment:
       - discovery.type=single-node
